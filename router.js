@@ -6,7 +6,7 @@ const user = require('./function/user.js');
 
 const router = express.Router();
 
-router.get('/', user.shouwSignin);
+router.get('/signin', user.showSignin);
 
 
 //导出
