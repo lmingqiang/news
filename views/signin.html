@@ -38,8 +38,29 @@
         </div>
     </div>
     <script src="/node_modules/jquery/dist/jquery.js"></script>
-    <script>
-    </script>
+<script>
+    //绑定submit事件
+    $('#signin_form').on('submit', function () {
+        //获取表单数据
+        var data = $(this).serialize();
+        // console.log(data);
+        
+        // 发送ajax请求
+        $.post('/signin', data, function (info) {
+            // console.log(info);  
+            if (info.code != 200) {
+                alert(info.msg);
+            }else {
+                // console.log(user);
+                alert(info.msg);               
+                window.location.href = '/';
+            }       
+        });
+
+        //阻止默认行为
+        return false;
+    });
+</script>
 </body>
 
 </html>
