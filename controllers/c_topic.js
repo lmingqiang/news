@@ -24,7 +24,6 @@ exports.topicCreateTopic = (req, res) => {
     });
 };
 
-
 //编辑页面数据
 exports.newtopicCreateTopic = (req, res) => {
     const body = req.body;
@@ -44,4 +43,75 @@ exports.newtopicCreateTopic = (req, res) => {
         });
     });
     
+};
+
+//文章详情页
+exports.topicDetails = (req, res) => {
+    // console.log(req.params);    
+    const topicId = req.params.topicID;
+    // console.log(topicId);    
+    M_topic.topicDetails(topicId, (err,  data) => {
+        if (err) {
+            return res.render({
+                code: 500,
+                msg: '服务器错误！'
+            }) ;
+        }
+        // console.log(data);        
+        res.render('topic/show.html', {
+            topic: data[0],
+            userId: req.session.user ? req.session.user.id : 0
+        });
+    });
+   
+};
+
+//删除文章
+exports.topicDetailDelete = (req, res) => {
+    const topicId = req.params.topicID;
+    M_topic.topicDetailDeletes(topicId, (err, data) => {
+        if (err) {
+            return res.render({
+                code:500,
+                msg: '服务器错误！'
+            });            
+        }
+        res.redirect('/');
+    });
+    
+};
+
+//渲染编辑文章页
+exports.topicDetaiEdit = (req, res) => {
+    const topicId = req.params.topicID;
+    M_topic.topicDetails(topicId, (err, data) => {
+        if (err) {
+            return res.render({
+                code: 500,
+                msg: '服务器错误！'
+            });
+        }
+        res.render('topic/edit.html', {
+            topic: data[0]
+        });
+    });    
+};
+
+//编辑页提交
+exports.topicEdit = (req, res) => {
+    const topicId = req.params.topicID;
+    const body = req.body;
+    M_topic.topicEdit(body, topicId, (err, data) => {
+        if (err) {
+            return res.render({
+                code: 500,
+                msg: '服务器错误！'
+            });
+        }
+        
+        res.send({
+            code: 200,
+            msg: '修改成功！'
+        });
+    });
 };

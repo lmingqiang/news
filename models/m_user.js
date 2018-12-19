@@ -13,6 +13,27 @@ exports.email = (email, cb) => {
         }
         
     });
-}
+};
 
+//验证nickname
+exports.nickname = (nickname, cb) => {
+    const sqlstr = 'select * from users where nickname = ?';
+    connection.query(sqlstr, nickname, (err, data) => {
+        if (err) {
+            return cb(err);
+        }
+        cb(null, data);
+    });
+};
+
+//添加用户
+exports.adduser = (body, cb) => {
+    const sqlstr = 'insert into users set ?';
+    connection.query(sqlstr, body, (err, data) => {
+        if (err) {
+            return cb(err);
+        }
+        cb(null, data);
+    });
+};
 

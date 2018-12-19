@@ -43,3 +43,64 @@ exports.manageFormdata = (req, res) => {
         });
     });    
 };
+
+//用户退出
+exports.signout = (req, res) => {
+    delete req.session.user;
+    res.redirect('/signin');
+};
+
+//渲染用户注册页
+exports.signup = (req, res) => {
+    res.render('signup.html');
+};
+
+//新用户注册
+exports.addSignup = (req, res) => {
+    const body = req.body;
+    // console.log(body);
+    M_user.email(body.email, (err,data) => {
+        if (err) {
+            return  res.send({
+                code: 500,
+                msg: '服务器错误！'
+            });
+        }
+        //用户名存在了
+        if (data[0]) {
+            return res.send({
+                code: 1,
+                msg: '用户名已存在，换个吧！'
+            });
+        }
+
+        //nickname存在
+        M_user.nickname(body.nickname, (err, data) => {
+            if (err) {
+                return res.send({
+                    code: 500,
+                    msg: '服务器错误！'
+                });
+            }
+            if (data[0]) {
+                return res.send({
+                    code: 2,
+                    msg: '该昵称已倍占用！'
+                });
+            }
+
+            M_user.adduser(body, (err, data) => {
+                if (err) {
+                    return res.send({
+                        code: 500,
+                        msg: '服务器错误！'
+                    });
+                }
+                res.send({
+                    code: 200,
+                    msg: '注册成功，请您登录！'
+                });
+            });
+        });
+    });
+};
