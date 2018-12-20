@@ -2,21 +2,18 @@
 const M_user = require('../models/m_user.js');
  
 //登录页面
-exports.showSignin = (req, res) => {
+exports.showSignin = (req, res, next) => {
     res.render('signin.html');
 };
 
 //处理登录表单数据
-exports.manageFormdata = (req, res) => {
+exports.manageFormdata = (req, res, next) => {
     //获取请求体
     const body = req.body;
     // console.log(body);
     M_user.email(body.email, (err, data) => {
         if (err) {
-            return res.send({
-                code: 500,
-                msg: '服务器错误！'
-            });
+            return next(err);
         }
         //判断用户名是否存在
         if (data.length === 0) {
@@ -45,26 +42,23 @@ exports.manageFormdata = (req, res) => {
 };
 
 //用户退出
-exports.signout = (req, res) => {
+exports.signout = (req, res, next) => {
     delete req.session.user;
     res.redirect('/signin');
 };
 
 //渲染用户注册页
-exports.signup = (req, res) => {
+exports.signup = (req, res, next) => {
     res.render('signup.html');
 };
 
 //新用户注册
-exports.addSignup = (req, res) => {
+exports.addSignup = (req, res, next) => {
     const body = req.body;
     // console.log(body);
     M_user.email(body.email, (err,data) => {
         if (err) {
-            return  res.send({
-                code: 500,
-                msg: '服务器错误！'
-            });
+            return  next(err);
         }
         //用户名存在了
         if (data[0]) {
@@ -77,10 +71,7 @@ exports.addSignup = (req, res) => {
         //nickname存在
         M_user.nickname(body.nickname, (err, data) => {
             if (err) {
-                return res.send({
-                    code: 500,
-                    msg: '服务器错误！'
-                });
+                return next(err);
             }
             if (data[0]) {
                 return res.send({
@@ -91,10 +82,7 @@ exports.addSignup = (req, res) => {
 
             M_user.adduser(body, (err, data) => {
                 if (err) {
-                    return res.send({
-                        code: 500,
-                        msg: '服务器错误！'
-                    });
+                    return next(err);
                 }
                 res.send({
                     code: 200,

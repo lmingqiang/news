@@ -38,9 +38,27 @@ app.use(session({
     saveUninitialized: false
 }));
 
+//session信息
+app.use((req, res, next) => {
+    app.locals.userid=req.session.user;
+    next();
+});
 
 //使用路由
 app.use(router);
+
+//输入错误标识---404
+app.use((req, res, next) => {
+    res.render('404.html');
+});
+
+// 服务器错误信息
+app.use((err,req,res,net) => {
+    res.send({
+        code: 500,
+        msg: '服务器错误！'
+    });
+});
 
 
 //监听端口

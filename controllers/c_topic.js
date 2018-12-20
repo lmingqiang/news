@@ -3,12 +3,12 @@ const M_topic = require('../models/m_topic.js');
 const moment = require('moment');
 
 //index页面
-exports.showIndex = (req, res) => {
+exports.showIndex = (req, res, next) => {
    
     M_topic.showTopic((err, data) => {
         // console.log(data);        
         if (err) {
-            return res.send('服务器错误！');
+            return next(err);            
         }
         res.render('index.html', {
             items: data,
@@ -18,24 +18,21 @@ exports.showIndex = (req, res) => {
 };
 
 //编辑页
-exports.topicCreateTopic = (req, res) => {
+exports.topicCreateTopic = (req, res, next) => {
     res.render('topic/create.html', {
         user: req.session.user
     });
 };
 
 //编辑页面数据
-exports.newtopicCreateTopic = (req, res) => {
+exports.newtopicCreateTopic = (req, res, next) => {
     const body = req.body;
     body.userId = req.session.user.id;
     body.createdAt = moment().format();
     // console.log(body);
     M_topic.newtopicCreateTopics(body, (err, data) => {
         if (err) {
-            return res.send({
-                code: 500,
-                msg: '服务器错误！'
-            });
+            return next(err);
         }
         res.send({
             code: 200,
@@ -46,16 +43,13 @@ exports.newtopicCreateTopic = (req, res) => {
 };
 
 //文章详情页
-exports.topicDetails = (req, res) => {
+exports.topicDetails = (req, res, next) => {
     // console.log(req.params);    
     const topicId = req.params.topicID;
     // console.log(topicId);    
     M_topic.topicDetails(topicId, (err,  data) => {
         if (err) {
-            return res.render({
-                code: 500,
-                msg: '服务器错误！'
-            }) ;
+            return next(err);
         }
         // console.log(data);        
         res.render('topic/show.html', {
@@ -67,14 +61,11 @@ exports.topicDetails = (req, res) => {
 };
 
 //删除文章
-exports.topicDetailDelete = (req, res) => {
+exports.topicDetailDelete = (req, res, next) => {
     const topicId = req.params.topicID;
     M_topic.topicDetailDeletes(topicId, (err, data) => {
         if (err) {
-            return res.render({
-                code:500,
-                msg: '服务器错误！'
-            });            
+            return next(err);
         }
         res.redirect('/');
     });
@@ -82,14 +73,11 @@ exports.topicDetailDelete = (req, res) => {
 };
 
 //渲染编辑文章页
-exports.topicDetaiEdit = (req, res) => {
+exports.topicDetaiEdit = (req, res, next) => {
     const topicId = req.params.topicID;
     M_topic.topicDetails(topicId, (err, data) => {
         if (err) {
-            return res.render({
-                code: 500,
-                msg: '服务器错误！'
-            });
+            return next(err);
         }
         res.render('topic/edit.html', {
             topic: data[0]
@@ -98,17 +86,13 @@ exports.topicDetaiEdit = (req, res) => {
 };
 
 //编辑页提交
-exports.topicEdit = (req, res) => {
+exports.topicEdit = (req, res, next) => {
     const topicId = req.params.topicID;
     const body = req.body;
     M_topic.topicEdit(body, topicId, (err, data) => {
         if (err) {
-            return res.render({
-                code: 500,
-                msg: '服务器错误！'
-            });
-        }
-        
+            return next(err);
+        }        
         res.send({
             code: 200,
             msg: '修改成功！'
